@@ -1,4 +1,4 @@
-require('dotenv').config();
+const pool = require('./config/db');
 const express = require('express');
 const cors = require('cors');
 const productoRoutes = require('./routes/producto.routes');
@@ -33,6 +33,24 @@ app.use((err, req, res, next) => {
 
 const port = process.env.PORT || 3000;
 
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
-});
+async function iniciar() {
+    try {
+        await pool.query('SELECT 1');
+        await pool.query('SELECT id, nombre, precio, stock, created_at FROM productos LIMIT 0');
+        app.listen(port, () => {
+            console.log(`Server is running on http://localhost:${port}`);
+        });
+    } catch (err) {
+        console.error('No se pudo iniciar la API: PostgreSQL no esta disponible o falta la tabla productos.');
+        console.error('Codigo:', err.code || 'desconocido');
+        if (err.code === 'ENOTFOUND') {
+            console.error('No se pudo resolver el host de DATABASE_URL. Revisa el .env guardado en la raiz del proyecto.');
+        } else if (err.code === '42P01') {
+            console.error('Ejecuta npm run db:init para crear la tabla productos.');
+        }
+        await pool.end();
+        process.exitCode = 1;
+    }
+}
+
+iniciar();
