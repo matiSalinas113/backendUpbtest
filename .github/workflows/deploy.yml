@@ -1,0 +1,66 @@
+name: Validar API y desplegar en Render
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Probar endpoints con PostgreSQL
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: backendupb_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/backendupb_test
+      DB_SSL: 'false'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Instalar dependencias
+        run: npm install
+      - name: Crear tabla productos
+        run: npm run db:init
+      - name: Probar health y productos
+        run: npm test
+      - name: Resumen
+        if: always()
+        run: echo "Resultado de pruebas de la API con PostgreSQL - ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
+
+  deploy:
+    name: Solicitar despliegue en Render
+    needs: test
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      RENDER_DEPLOY_HOOK_URL: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+    steps:
+      - name: Comprobar hook
+        run: |
+          if [ -z "$RENDER_DEPLOY_HOOK_URL" ]; then
+            echo 'Falta configurar el secret RENDER_DEPLOY_HOOK_URL en GitHub.' >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+      - name: Activar despliegue
+        run: |
+          curl --fail --silent --show-error --output /dev/null --request POST "$RENDER_DEPLOY_HOOK_URL"
+          echo 'Render acepto la solicitud de despliegue. Revisa el estado final en Render.' >> "$GITHUB_STEP_SUMMARY"

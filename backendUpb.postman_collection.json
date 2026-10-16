@@ -5,23 +5,82 @@
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "baseUrl", "value": "https://backendupbtest.onrender.com", "description": "Producción (Render)" },
-    { "key": "localUrl", "value": "http://localhost:3000", "description": "Local: copia este valor en baseUrl para probar en tu PC" },
-    { "key": "id", "value": "2", "description": "Id del producto a consultar, actualizar o eliminar" }
+    {
+      "key": "baseUrl",
+      "value": "https://backendupbtest.onrender.com",
+      "description": "Producción (Render)"
+    },
+    {
+      "key": "localUrl",
+      "value": "http://localhost:3000",
+      "description": "Local: copia este valor en baseUrl para probar en tu PC"
+    },
+    {
+      "key": "id",
+      "value": "2",
+      "description": "Id del producto a consultar, actualizar o eliminar"
+    }
   ],
   "item": [
+    {
+      "name": "Estado API y PostgreSQL",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/health",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "health"
+          ]
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('API y PostgreSQL disponibles', function () {",
+              "    pm.response.to.have.status(200);",
+              "    pm.expect(pm.response.json()).to.eql({ status: 'ok', database: 'connected' });",
+              "});"
+            ]
+          }
+        }
+      ]
+    },
     {
       "name": "Health check",
       "request": {
         "method": "GET",
-        "url": { "raw": "{{baseUrl}}/", "host": ["{{baseUrl}}"], "path": [""] }
+        "url": {
+          "raw": "{{baseUrl}}/",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            ""
+          ]
+        }
       }
     },
     {
       "name": "Listar productos",
       "request": {
         "method": "GET",
-        "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api", "productos"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/productos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos"
+          ]
+        }
       }
     },
     {
@@ -30,9 +89,20 @@
         "method": "GET",
         "url": {
           "raw": "{{baseUrl}}/api/productos?nombre=prueba",
-          "host": ["{{baseUrl}}"],
-          "path": ["api", "productos"],
-          "query": [{ "key": "nombre", "value": "prueba", "description": "Texto a buscar (no distingue mayúsculas)" }]
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos"
+          ],
+          "query": [
+            {
+              "key": "nombre",
+              "value": "prueba",
+              "description": "Texto a buscar (no distingue mayúsculas)"
+            }
+          ]
         }
       }
     },
@@ -40,7 +110,17 @@
       "name": "Obtener producto por id",
       "request": {
         "method": "GET",
-        "url": { "raw": "{{baseUrl}}/api/productos/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "productos", "{{id}}"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/productos/{{id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos",
+            "{{id}}"
+          ]
+        }
       }
     },
     {
@@ -60,46 +140,111 @@
       ],
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n    \"nombre\": \"Laptop\",\n    \"precio\": 1500,\n    \"stock\": 5\n}",
-          "options": { "raw": { "language": "json" } }
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
-        "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api", "productos"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/productos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos"
+          ]
+        }
       }
     },
     {
       "name": "Actualizar producto",
       "request": {
         "method": "PUT",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n    \"precio\": 1350,\n    \"stock\": 10\n}",
-          "options": { "raw": { "language": "json" } }
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
-        "url": { "raw": "{{baseUrl}}/api/productos/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "productos", "{{id}}"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/productos/{{id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos",
+            "{{id}}"
+          ]
+        }
       }
     },
     {
       "name": "Eliminar producto",
       "request": {
         "method": "DELETE",
-        "url": { "raw": "{{baseUrl}}/api/productos/{{id}}", "host": ["{{baseUrl}}"], "path": ["api", "productos", "{{id}}"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/productos/{{id}}",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos",
+            "{{id}}"
+          ]
+        }
       }
     },
     {
       "name": "Crear producto inválido (400)",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n    \"precio\": -10\n}",
-          "options": { "raw": { "language": "json" } }
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
         },
-        "url": { "raw": "{{baseUrl}}/api/productos", "host": ["{{baseUrl}}"], "path": ["api", "productos"] }
+        "url": {
+          "raw": "{{baseUrl}}/api/productos",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "productos"
+          ]
+        }
       }
     }
   ]

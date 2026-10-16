@@ -12,6 +12,16 @@ app.get('/', (req, res) => {
     res.send('API backendUpb funcionando');
 });
 
+app.get('/api/health', async (req, res) => {
+    try {
+        await pool.query('SELECT id, nombre, precio, stock, created_at FROM productos LIMIT 0');
+        res.json({ status: 'ok', database: 'connected' });
+    } catch (err) {
+        console.error('Health check: base de datos no disponible', err.code || 'desconocido');
+        res.status(503).json({ status: 'error', database: 'unavailable' });
+    }
+});
+
 app.use('/api/productos', productoRoutes);
 
 // Ruta no encontrada
@@ -53,4 +63,6 @@ async function iniciar() {
     }
 }
 
-iniciar();
+if (require.main === module) iniciar();
+
+module.exports = app;
