@@ -23,6 +23,22 @@
   ],
   "item": [
     {
+      "name": "Informacion de la API",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/api/info",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "api",
+            "info"
+          ]
+        }
+      }
+    },
+    {
       "name": "Estado API y PostgreSQL",
       "request": {
         "method": "GET",

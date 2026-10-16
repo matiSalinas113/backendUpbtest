@@ -2,6 +2,7 @@ const pool = require('./config/db');
 const express = require('express');
 const cors = require('cors');
 const productoRoutes = require('./routes/producto.routes');
+const { name, version } = require('../package.json');
 
 const app = express();
 
@@ -10,6 +11,10 @@ app.use(express.json());
 
 app.get('/', (req, res) => {
     res.send('API backendUpb funcionando');
+});
+
+app.get('/api/info', (req, res) => {
+    res.json({ nombre: name, version, mensaje: 'API funcionando correctamente' });
 });
 
 app.get('/api/health', async (req, res) => {
