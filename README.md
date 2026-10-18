@@ -2,6 +2,8 @@
 
 API de productos con Express y PostgreSQL.
 
+[![Validar API](https://github.com/matiSalinas113/backendUpbtest/actions/workflows/deploy.yml/badge.svg)](https://github.com/matiSalinas113/backendUpbtest/actions/workflows/deploy.yml)
+
 ## Ejecutar localmente
 
 1. Instala dependencias con `npm install`.
@@ -13,6 +15,14 @@ En PowerShell, si bloquea `npm.ps1`, usa `npm.cmd` en lugar de `npm`.
 ## Probar en Postman
 
 Importa `backendUpb.postman_collection.json`. Configura la variable de coleccion `baseUrl` como `http://localhost:3000` para pruebas locales o con la URL de tu servicio en Render.
+
+Selecciona **Informacion de la API** y envia `GET {{baseUrl}}/api/info`, sin body ni autenticacion. Devuelve HTTP 200:
+
+```json
+{ "nombre": "backendupb", "version": "1.0.0", "mensaje": "API funcionando correctamente" }
+```
+
+En **Actions > Validar API y desplegar en Render**, el paso **Probar endpoint HTTP para Postman** inicia el servidor y hace una peticion real. Su respuesta aparece en el resumen y en el artefacto `respuesta-endpoint-info`. Las pruebas se ejecutan con pushes y pull requests a `main` y `dev`; el despliegue se solicita solo desde `main`.
 
 Envia `GET {{baseUrl}}/api/health`. Con PostgreSQL y la tabla productos disponibles devuelve HTTP 200:
 
@@ -30,7 +40,7 @@ Si la base deja de estar disponible devuelve HTTP 503:
 
 ## GitHub Actions y Render
 
-El workflow `.github/workflows/deploy.yml` se ejecuta en pushes y pull requests a `main`, y permite ejecucion manual desde Actions. Usa PostgreSQL temporal, crea la tabla y ejecuta `npm test`. No usa las credenciales de produccion para las pruebas.
+El workflow `.github/workflows/deploy.yml` se ejecuta en pushes y pull requests a `main` y `dev`, y permite ejecucion manual desde Actions. Usa PostgreSQL temporal, crea la tabla y ejecuta `npm test`. No usa las credenciales de produccion para las pruebas.
 
 Para activar el despliegue despues de las pruebas:
 

@@ -24,6 +24,23 @@
   "item": [
     {
       "name": "Informacion de la API",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Informacion correcta', function () {",
+              "    const info = pm.response.json();",
+              "    pm.expect(info.nombre).to.eql('backendupb');",
+              "    pm.expect(info.version).to.be.a('string');",
+              "    pm.expect(info.mensaje).to.eql('API funcionando correctamente');",
+              "});"
+            ]
+          }
+        }
+      ],
       "request": {
         "method": "GET",
         "url": {

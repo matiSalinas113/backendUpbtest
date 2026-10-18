@@ -13,6 +13,17 @@ test('API conectada a PostgreSQL', async (t) => {
     });
     const baseUrl = `http://127.0.0.1:${server.address().port}`;
 
+    await t.test('GET /api/info devuelve la informacion de la API', async () => {
+        const response = await fetch(`${baseUrl}/api/info`);
+        assert.equal(response.status, 200);
+        assert.match(response.headers.get('content-type'), /application\/json/);
+        assert.deepEqual(await response.json(), {
+            nombre: require('../package.json').name,
+            version: require('../package.json').version,
+            mensaje: 'API funcionando correctamente',
+        });
+    });
+
     await t.test('GET /api/health devuelve 200 y confirma la base de datos', async () => {
         const response = await fetch(`${baseUrl}/api/health`);
         assert.equal(response.status, 200);

@@ -2,9 +2,9 @@ name: Validar API y desplegar en Render
 
 on:
   push:
-    branches: [main]
+    branches: [main, dev]
   pull_request:
-    branches: [main]
+    branches: [main, dev]
   workflow_dispatch:
 
 permissions:
@@ -36,12 +36,29 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: npm
       - name: Instalar dependencias
-        run: npm install
+        run: npm ci
       - name: Crear tabla productos
         run: npm run db:init
-      - name: Probar health y productos
+      - name: Probar info, health y productos
         run: npm test
+      - name: Probar endpoint HTTP para Postman
+        run: |
+          npm start > api.log 2>&1 &
+          API_PID=$!
+          trap 'kill "$API_PID" 2>/dev/null || true' EXIT
+          curl --fail --silent --show-error --retry 10 --retry-delay 1 --retry-connrefused http://localhost:3000/api/info --output respuesta-info.json
+          node -e "const assert = require('node:assert/strict'); const info = require('./respuesta-info.json'); assert.equal(info.nombre, require('./package.json').name); assert.equal(info.mensaje, 'API funcionando correctamente');"
+          echo '### GET /api/info - HTTP 200' >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat respuesta-info.json >> "$GITHUB_STEP_SUMMARY"
+          printf '\n```\n' >> "$GITHUB_STEP_SUMMARY"
+      - name: Guardar respuesta del endpoint
+        uses: actions/upload-artifact@v4
+        with:
+          name: respuesta-endpoint-info
+          path: respuesta-info.json
       - name: Resumen
         if: always()
         run: echo "Resultado de pruebas de la API con PostgreSQL - ${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
