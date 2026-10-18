@@ -71,3 +71,5 @@ El frontend está en [upbtest2](https://github.com/matiSalinas113/upbtest2) y se
 Los productos contienen `id`, `nombre`, `precio`, `stock` y `createdAt`. Las validaciones devuelven 400 con `{ "error": "mensaje" }`. CORS permite las llamadas del frontend alojado en Firebase, incluidas las solicitudes OPTIONS para JSON, PUT y DELETE.
 
 `npm test` verifica información, salud, listado, CRUD completo, búsqueda, validaciones, CORS y el caso de base no disponible. La prueba CRUD elimina su registro temporal incluso si falla una aserción. En GitHub Actions se utiliza una base PostgreSQL temporal separada de producción.
+
+El workflow de producción envía el SHA validado mediante el parámetro `ref` del deploy hook y comprueba `/api/health` y `/api/info` en la URL pública antes de marcar el despliegue como exitoso. Esto evita que una rama distinta configurada en Render publique código antiguo. Según la [documentación de Render](https://render.com/docs/deploy-hooks), desplegar un SHA mediante el hook desactiva sus autodeploys directos; los despliegues posteriores quedan a cargo de GitHub Actions después de pasar las pruebas de `main`.
