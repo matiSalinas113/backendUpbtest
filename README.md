@@ -52,3 +52,22 @@ Para activar el despliegue despues de las pruebas:
 En la pestana Actions puedes revisar por separado las pruebas y la solicitud de despliegue. Si falta el secret, el job de despliegue falla con una indicacion en su resumen. La aceptacion del hook confirma la solicitud; el resultado final del despliegue se revisa en Render. Tras finalizar, prueba `/api/health` con la URL publica en Postman.
 
 No subas `.env` ni el Deploy Hook al repositorio.
+
+## Integración con el frontend y demostración
+
+El frontend está en [upbtest2](https://github.com/matiSalinas113/upbtest2) y se publica en Firebase Hosting. Los productos se guardan en PostgreSQL a través de esta API. La app utiliza `NEXT_PUBLIC_API_URL` para elegir el backend; la URL pública configurada por defecto es `https://backendupbtest.onrender.com`.
+
+| Método | Ruta | Resultado |
+| --- | --- | --- |
+| GET | `/api/info` | Nombre, versión y mensaje de la API |
+| GET | `/api/health` | 200 con base conectada, 503 si no está disponible |
+| GET | `/api/productos` | Lista de productos |
+| GET | `/api/productos?nombre=texto` | Coincidencia parcial literal, sin distinguir mayúsculas |
+| GET | `/api/productos/:id` | Detalle o 404 |
+| POST | `/api/productos` | Crea y devuelve el producto con 201 |
+| PUT | `/api/productos/:id` | Actualiza los campos enviados, conserva los restantes |
+| DELETE | `/api/productos/:id` | Elimina y devuelve 204 sin body |
+
+Los productos contienen `id`, `nombre`, `precio`, `stock` y `createdAt`. Las validaciones devuelven 400 con `{ "error": "mensaje" }`. CORS permite las llamadas del frontend alojado en Firebase, incluidas las solicitudes OPTIONS para JSON, PUT y DELETE.
+
+`npm test` verifica información, salud, listado, CRUD completo, búsqueda, validaciones, CORS y el caso de base no disponible. La prueba CRUD elimina su registro temporal incluso si falla una aserción. En GitHub Actions se utiliza una base PostgreSQL temporal separada de producción.
