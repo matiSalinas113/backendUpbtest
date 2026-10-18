@@ -55,7 +55,7 @@ No subas `.env` ni el Deploy Hook al repositorio.
 
 ## Integración con el frontend y demostración
 
-El frontend está en [upbtest2](https://github.com/matiSalinas113/upbtest2) y se publica en Firebase Hosting. Los productos se guardan en PostgreSQL a través de esta API. La app utiliza `NEXT_PUBLIC_API_URL` para elegir el backend; la URL pública configurada por defecto es `https://backendupbtest.onrender.com`.
+El frontend está en [upbtest2](https://github.com/matiSalinas113/upbtest2) y se publica en Firebase Hosting. Los productos se guardan en PostgreSQL a través de esta API. La app utiliza `NEXT_PUBLIC_API_URL` para elegir el backend; la URL pública configurada por defecto es `https://backendupbtest-1.onrender.com`.
 
 | Método | Ruta | Resultado |
 | --- | --- | --- |
